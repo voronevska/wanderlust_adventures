@@ -49,9 +49,6 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 $kernel = $app->make(Kernel::class);
 
 
-$homeContent = file_get_contents(__DIR__.'/../resources/views/home.blade.php');
-$response->setContent($homeContent);
-
 $response = $kernel->handle(
     $request = Request::capture()
 )->send();
