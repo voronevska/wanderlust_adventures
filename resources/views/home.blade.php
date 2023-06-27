@@ -16,15 +16,6 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-    }
-
-    h1, h2 {
-      font-family: 'Pacifico', sans-serif;
-      user-select: none;
-    }
-
     .swiper-pagination-bullet {
       opacity: 0.7;
       background-color: white;
