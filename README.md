@@ -1,3 +1,5 @@
+[DEMO LINK](https://voronevska.github.io/wanderlust_adventures/)
+
 Dependencies:
 
 Swiper
@@ -11,3 +13,5 @@ Actual time spent: 20 hours.
 - since "Our products" has 2 options for content placement, there was used conditional rendering for this component
 - an additional submenu has been created for "Our products" (header)
 - added new block "Our Features"
+- Testimonials - data are automatically pulled into the carousel
+- Contact - form is fixed

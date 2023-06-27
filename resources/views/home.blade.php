@@ -14,6 +14,44 @@
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    h1, h2 {
+      font-family: 'Pacifico', sans-serif;
+      user-select: none;
+    }
+
+    .swiper-pagination-bullet {
+      opacity: 0.7;
+      background-color: white;
+      border: 1px solid #333;
+    }
+
+    .swiper-pagination-bullet-active {
+      background-color: #333;
+      border: 1px solid white;
+    }
+
+    .bgc-1 {
+      background: linear-gradient(to left, #3b5998, #6792c7, #96b5e1, #c7d9f5);
+    }
+
+    .bgc-2 {
+      background: linear-gradient(to right, #a3d9ff, #92c8f9, #aab5e7, #c997d4, #e378c2, #f864b0, #ff868c);
+    }
+
+    .bgc-3 {
+      background: linear-gradient(to right, #ff9999 25%, #ff8080 40%, #ff6666 55%, #ff4d4d 70%, #ff4d4d);
+    }
+
+    .bgc-4 {
+      background: linear-gradient(to left, #73c7ff, #87d0ff, #9bdcff, #a9e4ff, #b6ecff, #c3f3ff);
+    }
+  </style>
 </head>
 
 <body>
@@ -377,7 +415,8 @@
           Contact us
         </h2>
         
-        <form id="contact-form" class="max-w-lg mr-8">
+        <form id="contact-form" class="max-w-lg mr-8" action="{{ route('store') }}" method="POST">
+        @csrf
           <div class="mb-4">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
               Name
@@ -385,6 +424,7 @@
             <input
               class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-yellow-500" 
               id="name" 
+              name="name"
               type="text"
               placeholder="Enter your name"
               required
@@ -398,6 +438,7 @@
             <input 
               class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-yellow-500" 
               id="email"
+              name="email"
               type="email"
               placeholder="Enter your email"
               required
@@ -411,6 +452,7 @@
             <input
               class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-yellow-500" 
               id="phone"
+              name="phone"
               type="text"
               placeholder="Enter your phone number"
               required
@@ -424,6 +466,7 @@
             <textarea
               class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-yellow-500" 
               id="message"
+              name="message"
               placeholder="Enter your message"
               required
             ></textarea>
@@ -744,69 +787,43 @@
 
   <!-- Script for Contact us -->
   <script>
-    const form = document.getElementById('contact-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const messageContainer = document.getElementById('message-container');
-
-    form.addEventListener('submit', function(event) {
+    document.getElementById('contact-form').addEventListener('submit', function (event) {
       event.preventDefault();
 
-      if (form.checkValidity()) {
-        const formData = new FormData(form);
+      var form = event.target;
+      var formData = new FormData(form);
 
-        fetch('/contact', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          form.reset();
+      fetch(form.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(function (response) {
+        if (response.ok) {
+          return response.json();
+        } else if (response.status === 422) {
+          return response.json().then(function (data) {
+            throw new Error(JSON.stringify(data.errors));
+          });
+        } else {
+          throw new Error('Error in sending');
+        }
+      })
+      .then(function (data) {
+        var messageContainer = document.getElementById('message-container');
+        messageContainer.textContent = data.message;
+        messageContainer.style.color = 'green';
 
-          if (data.success) {
-            const successMessage = document.createElement('div');
-            successMessage.textContent = 'Successful';
-            successMessage.classList.add('text-green-500', 'ml-4');
-            messageContainer.innerHTML = '';
-            messageContainer.appendChild(successMessage);
+        form.reset();
 
-            setTimeout(function() {
-              successMessage.remove();
-            }, 3000);
-          } else {
-            const errorMessage = document.createElement('div');
-            errorMessage.textContent = 'Error: ' + (data.message || 'Unknown error');
-            errorMessage.classList.add('text-red-500', 'ml-4');
-            messageContainer.innerHTML = '';
-            messageContainer.appendChild(errorMessage);
-
-            setTimeout(function() {
-              errorMessage.remove();
-            }, 3000);
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          const errorMessage = document.createElement('div');
-          errorMessage.textContent = 'An error occurred. Please try again later.';
-          errorMessage.classList.add('text-red-500', 'ml-4');
-          messageContainer.innerHTML = '';
-          messageContainer.appendChild(errorMessage);
-
-          setTimeout(function() {
-              errorMessage.remove();
-          }, 3000);
-        });
-      } else {
-        const errorMessage = document.createElement('div');
-        errorMessage.textContent = 'Please fill out all required fields.';
-        errorMessage.classList.add('text-red-500', 'ml-4');
-        messageContainer.innerHTML = '';
-        messageContainer.appendChild(errorMessage);
-
-        setTimeout(function() {
-          errorMessage.remove();
+        setTimeout(function () {
+          messageContainer.textContent = '';
+          messageContainer.style.color = '';
         }, 3000);
-      }
+      })
+      .catch(function (error) {
+        console.error(error.message);
+        document.getElementById('message-container').textContent = 'Error: ' + error.message;
+      });
     });
   </script>
   

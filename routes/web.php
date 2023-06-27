@@ -13,8 +13,8 @@ use App\Http\Middleware\VerifyCsrfToken;
 |
 */
 
-Route::namespace('App\Http\Controllers')->controller('HomeController')->group(function() {
-    Route::get('/', 'index')->name('home');
-    Route::get('testimoniale', 'images')->name('images');
-    Route::post('contact', 'store')->withoutMiddleware([VerifyCsrfToken::class])->name('store');
+Route::namespace('App\Http\Controllers')->group(function() {
+  Route::get('/', 'HomeController@index')->name('home');
+  Route::get('testimoniale', 'HomeController@images')->name('images');
+  Route::post('contact', 'ContactController@store')->withoutMiddleware([VerifyCsrfToken::class])->name('store');
 });
