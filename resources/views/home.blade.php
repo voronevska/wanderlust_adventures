@@ -764,10 +764,10 @@
     });
   </script>
 
-  <!-- Menu scrolling -->
+  <!-- Link scrolling to sections -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var menuLinks = document.querySelectorAll('nav ul li a');
+      var menuLinks = document.querySelectorAll('a');
 
       menuLinks.forEach(function (link) {
         link.addEventListener('click', function (event) {
